@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "creative-assistant"
+version = "0.0.1"
+dependencies = [
+  "pydantic==2.9.2",
+  "langchain_google_vertexai",
+  "langchain",
+  "langchain_core",
+  "langchain_community",
+]
+requires-python = ">=3.8"
+authors = [
+  {name = "Google Inc. (gTech gPS CSE team)", email = "no-reply@google.com"},
+]
+license = {text = "Apache 2.0"}
+readme = "README.md"
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python"
+]
+[project.optional-dependencies]
+tagging=[
+  "media-tagging[all]",
+]
+categorization=[
+  "text-categorization",
+]
+server = [
+  "fastapi[standard]"
+]
+all = [
+  "creative-assistant[tagging,categorization]"
+]
+[options.extras_require]
+test =  [
+  "pytest",
+  "pytest-cov"
+]
+[tool.pytest.ini_options]
+testpaths = [
+  "tests",
+]
+
+[project.scripts]
+creative-assistant="creative_assistant.entrypoints.cli:main"

@@ -1,0 +1,5 @@
+{
+  "*": {"type": "root"},
+  "creative_assistant/*.py": {"type": "core", "alternate": "tests/unit/test_{}.py"},
+  "tests/unit/test_*.py": {"alternate": "creative_assistant/{}.py"},
+}
