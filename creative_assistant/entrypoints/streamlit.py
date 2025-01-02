@@ -12,6 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=missing-module-docstring
+# pylint: disable=C0330
 
-__version__ = '0.2.0'
+"""Helper from running streamlit entrypoint from installed library."""
+
+import pathlib
+import subprocess
+
+
+def main():
+  """Runs streamlit entrypoint as a subprocess."""
+  directory = pathlib.Path(__file__).parent
+  subprocess.run(
+    ['streamlit', 'run', directory / 'streamlit_app.py'], check=False
+  )
+
+
+if __name__ == '__main__':
+  main()

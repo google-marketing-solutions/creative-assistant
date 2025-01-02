@@ -4,7 +4,6 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "creative-assistant"
-version = "0.0.1"
 dependencies = [
   "pydantic==2.9.2",
   "langchain_google_vertexai",
@@ -22,6 +21,12 @@ classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python"
 ]
+dynamic=["version"]
+
+[tool.setuptools.dynamic]
+version = {attr = "creative_assistant.__version__"}
+
+
 [project.optional-dependencies]
 tagging=[
   "media-tagging[all]",
@@ -31,6 +36,9 @@ categorization=[
 ]
 server = [
   "fastapi[standard]"
+]
+streamlit = [
+  "streamlit"
 ]
 all = [
   "creative-assistant[tagging,categorization]"
@@ -47,3 +55,4 @@ testpaths = [
 
 [project.scripts]
 creative-assistant="creative_assistant.entrypoints.cli:main"
+creative-assistant-ui="creative_assistant.entrypoints.streamlit:main"
