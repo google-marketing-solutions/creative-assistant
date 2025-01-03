@@ -41,6 +41,7 @@ You have various tools in disposal and you can use them only when you 100% sure
 that tool is the right choice.
 When you used a tool always mention the tool's name in the response.
 If no tool is used, indicate that the answer is coming directly from the LLM.
+Here are the tools you have: {tools_descriptions}
 """
 
 
@@ -106,14 +107,28 @@ class CreativeAssistant:
     self._chat_id = None
 
   @property
+  def tools_descriptions(self) -> dict[str, str]:
+    """Mapping between tool's name and its description."""
+    return {tool.name: tool.description for tool in self.tools}
+
+  @property
   def agent_executor(self) -> agents.AgentExecutor:
     """Defines agent executor to handle question from users."""
+    tools_descriptions = '\n'.join(
+      [
+        f'{name}: {description}'
+        for name, description in self.tools_descriptions.items()
+      ]
+    )
+
     prompt = prompts.ChatPromptTemplate(
       messages=[
         prompts.SystemMessagePromptTemplate(
           prompt=prompts.PromptTemplate(
             input_variables=[],
-            template=_SYSTEM_PROMPT,
+            template=_SYSTEM_PROMPT.format(
+              tools_descriptions=tools_descriptions
+            ),
           )
         ),
         prompts.MessagesPlaceholder(
