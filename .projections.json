@@ -1,5 +1,5 @@
 {
-  "*": {"type": "root"},
-  "creative_assistant/*.py": {"type": "core", "alternate": "tests/unit/test_{}.py"},
-  "tests/unit/test_*.py": {"alternate": "creative_assistant/{}.py"},
+  "libs/creative-assistant/creative_assistant/*.py": {"type": "assist", "alternate": "libs/creative-assistant/tests/unit/test_{}.py"},
+  "libs/creative-assistant/tests/unit/test_*.py": {"alternate": "libs/creative-assistant/creative_assistant/{}.py"},
+  "libs/plugins/*": {"type": "plugin"}
 }

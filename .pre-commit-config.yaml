@@ -1,7 +1,7 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 fail_fast: true
-default_stages: [commit]
+default_stages: [pre-commit]
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v3.2.0
@@ -29,14 +29,14 @@ repos:
   hooks:
   - id: pytest-check
     name: pytest-check
-    entry: pytest -n auto tests/unit/
+    entry: pytest -n auto libs/creative-assistant/tests/unit/
     language: system
     pass_filenames: false
     always_run: true
   - id: pytest-e2e
-    stages: [push]
+    stages: [pre-push]
     name: e2e
-    entry: pytest -n auto tests/end_to_end/
+    entry: pytest -n auto libs/creative-assistant/tests/end_to_end/
     language: system
     pass_filenames: false
     always_run: true

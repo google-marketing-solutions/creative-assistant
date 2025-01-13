@@ -73,6 +73,7 @@ def reset_chat_settings() -> None:
 dotenv.load_dotenv()
 load_chats()
 
+st.set_page_config(page_title='Creative Assistant', layout='wide')
 st.title('Creative Assistant')
 
 if 'session_id' not in st.session_state:
