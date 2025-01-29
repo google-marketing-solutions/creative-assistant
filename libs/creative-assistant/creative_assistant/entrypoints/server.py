@@ -17,21 +17,21 @@
 
 import dotenv
 import fastapi
-from typing_extensions import TypedDict
+import pydantic
 
+import creative_assistant
 from creative_assistant import assistant, logger
 
 dotenv.load_dotenv()
 
 app = fastapi.FastAPI()
 
-creative_assistant = assistant.bootstrap_assistant()
-chat_id = creative_assistant.start_chat()
+bootstraped_assistant = assistant.bootstrap_assistant()
 
 assistant_logger = logger.init_logging('server')
 
 
-class CreativeAssistantPostRequest(TypedDict):
+class CreativeAssistantPostRequest(pydantic.BaseModel):
   """Specifies structure of request for interacting with assistant.
 
   Attributes:
@@ -43,9 +43,39 @@ class CreativeAssistantPostRequest(TypedDict):
   chat_id: str | None
 
 
+class CreativeAssistantChatPostRequest(pydantic.BaseModel):
+  """Specifies structure of request for interacting with assistant.
+
+  Attributes:
+    chat_name: Name of a chat.
+    chat_id: Optional chat_id.
+  """
+
+  name: str
+
+
+@app.get('/chats')
+def get_chats():
+  return [
+    chat.to_dict() for chat in bootstraped_assistant.chat_service.get_chats()
+  ]
+
+
+@app.post('/chats')
+def create_chat(request: CreativeAssistantChatPostRequest) -> None:
+  chat = creative_assistant.Chat(chat_id='1', name=request.name)
+  return bootstraped_assistant.chat_service.save_chat(chat)
+
+
+@app.get('/chats/{chat_id}')
+def get_chat(chat_id: str):
+  chat_id = bootstraped_assistant.start_chat()
+  return bootstraped_assistant.chat_service.load_chat(chat_id).to_full_dict()
+
+
 @app.post('/')
 def interact(
-  request: CreativeAssistantPostRequest = fastapi.Body(embed=True),
+  request: CreativeAssistantPostRequest,
 ) -> str:
   """Interacts with CreativeAssistant.
 
@@ -55,7 +85,7 @@ def interact(
   Returns:
     Question and answer to it.
   """
-  result = creative_assistant.interact(request.question, request.chat_id)
+  result = bootstraped_assistant.interact(request.question, request.chat_id)
   assistant_logger.info(
     '[Session: %s, Prompt: %s]: Message: %s',
     result.chat_id,
