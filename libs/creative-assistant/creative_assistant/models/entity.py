@@ -12,14 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=C0330, g-bad-import-order, g-multiple-import, missing-module-docstring
+# pylint: disable=C0330, g-bad-import-order, g-multiple-import
 
-from creative_assistant.assistant import CreativeAssistant
-from creative_assistant.models.chat import Chat, Message
+"""Specifies interface for other models."""
 
-__all__ = [
-  'Chat',
-  'CreativeAssistant',
-  'Message',
-]
-__version__ = '0.2.0'
+from sqlalchemy.orm import DeclarativeBase
+
+
+class Entity(DeclarativeBase):
+  """Interface for other models."""

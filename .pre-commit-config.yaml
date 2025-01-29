@@ -43,7 +43,7 @@ repos:
   hooks:
   - id: pytest-check
     name: pytest-check
-    entry: pytest -n auto libs/creative-assistant/tests/unit/
+    entry: pytest libs/creative-assistant/tests/unit/
     language: system
     pass_filenames: false
     always_run: true
