@@ -34,7 +34,8 @@ from langchain import agents
 from langchain_community.chat_message_histories import SQLChatMessageHistory
 from langchain_core import language_models, prompts
 
-from creative_assistant import llms
+from creative_assistant import chat_service, llms
+from creative_assistant.models import chat as ch
 
 _SYSTEM_PROMPT = """You are a helpful assistant answering users' questions.
 You have various tools in disposal and you can use them only when you 100% sure
@@ -86,6 +87,7 @@ class CreativeAssistant:
     llm: Instantiated LLM.
     tools: Various tools used to question external sources.
     verbose: Whether to provide debug information when running assistant.
+    chat_service: Service for handling chat history.
   """
 
   def __init__(
@@ -93,6 +95,7 @@ class CreativeAssistant:
     llm: language_models.BaseLanguageModel,
     tools: Sequence[langchain_core.tools.BaseTool],
     verbose: bool = False,
+    chats_service: chat_service.ChatService = chat_service.ChatService(),
   ) -> None:
     """Initializes CreativeAssistant based on LLM and vectorstore.
 
@@ -100,10 +103,12 @@ class CreativeAssistant:
       llm: Instantiated LLM.
       tools: Various tools used to question external sources.
       verbose: Whether to provide debug information when running assistant.
+      chats_service: Service for handling chat history.
     """
     self.llm = llm
     self.tools = tools
     self.verbose = verbose
+    self.chat_service = chats_service
     self._chat_id = None
 
   @property
@@ -198,10 +203,18 @@ class CreativeAssistant:
       chat_id = self._chat_id
     elif chat_id is None:
       chat_id = str(uuid.uuid1())
+    self.chat_service.save_message(
+      ch.Message(chat_id=chat_id, author='user', content=question)
+    )
 
     response = self.agent_executor.invoke(
       {'input': question},
       config={'configurable': {'session_id': chat_id}},
+    )
+    self.chat_service.save_message(
+      ch.Message(
+        chat_id=chat_id, author='assistant', content=response.get('output')
+      )
     )
     return CreativeAssistantResponse(
       input=response.get('input'),
