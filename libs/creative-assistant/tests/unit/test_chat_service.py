@@ -29,21 +29,22 @@ class TestChatService:
     repo = chat_service.ChatRepository(f'sqlite:///{test_db}')
     return chat_service.ChatService(repo)
 
-  def test_get_chats_returns_all_chats(self, service):
-    chat_id = '1'
-    new_chat = creative_assistant.Chat(chat_id=chat_id)
-    service.save_chat(new_chat)
+  @pytest.fixture(scope='class')
+  def test_chat_id(self, service):
+    new_chat = creative_assistant.Chat()
+    return service.save_chat(new_chat)
+
+  def test_get_chats_returns_all_chats(self, service, test_chat_id):
     chats = service.get_chats()
-    expected_chat = creative_assistant.Chat(chat_id='1', name='')
+    expected_chat = creative_assistant.Chat(chat_id=test_chat_id, name='')
     assert chats[0] == expected_chat
 
-  def test_add_message_saves_message_to_chat(self, service):
-    chat_id = '1'
+  def test_add_message_saves_message_to_chat(self, service, test_chat_id):
     new_message = creative_assistant.Message(
-      chat_id=chat_id, author='user', content='Test'
+      chat_id=test_chat_id, author='user', content='Test'
     )
     service.save_message(new_message)
-    chat = service.load_chat(chat_id)
-    expected_chat = creative_assistant.Chat(chat_id='1', name='')
+    chat = service.load_chat(test_chat_id)
+    expected_chat = creative_assistant.Chat(chat_id=test_chat_id, name='')
     assert chat == expected_chat
     assert chat.messages

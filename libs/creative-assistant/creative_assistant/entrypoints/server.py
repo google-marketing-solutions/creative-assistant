@@ -40,7 +40,7 @@ class CreativeAssistantPostRequest(pydantic.BaseModel):
   """
 
   question: str
-  chat_id: str | None
+  chat_id: str | None = None
 
 
 class CreativeAssistantChatPostRequest(pydantic.BaseModel):
@@ -63,7 +63,7 @@ def get_chats():
 
 @app.post('/chats')
 def create_chat(request: CreativeAssistantChatPostRequest) -> None:
-  chat = creative_assistant.Chat(chat_id='1', name=request.name)
+  chat = creative_assistant.Chat(name=request.name)
   return bootstraped_assistant.chat_service.save_chat(chat)
 
 
@@ -73,7 +73,7 @@ def get_chat(chat_id: str):
   return bootstraped_assistant.chat_service.load_chat(chat_id).to_full_dict()
 
 
-@app.post('/')
+@app.post('/interact')
 def interact(
   request: CreativeAssistantPostRequest,
 ) -> str:

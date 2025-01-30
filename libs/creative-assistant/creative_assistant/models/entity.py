@@ -16,8 +16,8 @@
 
 """Specifies interface for other models."""
 
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase, MappedAsDataclass
 
 
-class Entity(DeclarativeBase):
+class Entity(DeclarativeBase, MappedAsDataclass):
   """Interface for other models."""

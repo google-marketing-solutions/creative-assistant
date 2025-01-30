@@ -199,13 +199,10 @@ class CreativeAssistant:
     Returns:
       Mappings with question and answer.
     """
-    if chat_id is None and self._chat_id:
-      chat_id = self._chat_id
-    elif chat_id is None:
-      chat_id = str(uuid.uuid1())
-    self.chat_service.save_message(
-      ch.Message(chat_id=chat_id, author='user', content=question)
-    )
+    if not chat_id:
+      chat_id = self.chat_service.save_chat(ch.Chat())
+    new_message = ch.Message(chat_id=chat_id, author='user', content=question)
+    self.chat_service.save_message(new_message)
 
     response = self.agent_executor.invoke(
       {'input': question},

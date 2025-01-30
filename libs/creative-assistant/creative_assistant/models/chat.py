@@ -34,20 +34,22 @@ class Message(entity.Entity):
 
   __tablename__ = 'messages'
 
-  chat_id: Mapped[str] = mapped_column(sqlalchemy.ForeignKey('chats.chat_id'))
+  chat_id: Mapped[uuid.UUID] = mapped_column(
+    sqlalchemy.ForeignKey('chats.chat_id')
+  )
 
   author: Mapped[str] = mapped_column(sqlalchemy.String(255))
   content: Mapped[str] = mapped_column(sqlalchemy.String(255))
   message_id: Mapped[uuid.UUID] = mapped_column(
     sqlalchemy.UUID,
     primary_key=True,
-    default=uuid.uuid4,
+    default_factory=uuid.uuid4,
     unique=True,
   )
   created_at: Mapped[datetime.datetime] = mapped_column(
-    sqlalchemy.DateTime, default=datetime.datetime.utcnow
+    sqlalchemy.DateTime, default_factory=datetime.datetime.utcnow
   )
-  chat: Mapped[Chat] = relationship(back_populates='messages')
+  chat: Mapped[Chat] = relationship(back_populates='messages', init=False)
 
   def __repr__(self):
     return (
@@ -71,15 +73,21 @@ class Chat(entity.Entity):
 
   __tablename__ = 'chats'
 
-  chat_id: Mapped[str] = mapped_column(
-    sqlalchemy.String(255), primary_key=True, unique=True
+  messages: Mapped[list[Message]] = relationship(
+    back_populates='chat',
+    init=False,
+    lazy='selectin',
+    default_factory=list,
+  )
+  chat_id: Mapped[uuid.UUID] = mapped_column(
+    sqlalchemy.UUID,
+    primary_key=True,
+    unique=True,
+    default_factory=uuid.uuid4,
   )
   name: Mapped[str] = mapped_column(sqlalchemy.String(255), default='')
   created_at: Mapped[datetime.datetime] = mapped_column(
-    sqlalchemy.DateTime, default=datetime.datetime.utcnow
-  )
-  messages: Mapped[list[Message]] = relationship(
-    back_populates='chat', lazy='selectin'
+    sqlalchemy.DateTime, default_factory=datetime.datetime.utcnow
   )
 
   def __repr__(self):
@@ -93,7 +101,7 @@ class Chat(entity.Entity):
 
   def to_dict(self) -> dict[str, str | datetime.datetime]:
     return {
-      'chat_id': self.chat_id,
+      'chat_id': self.chat_id.hex,
       'name': self.name,
       'created_at': self.created_at,
     }
