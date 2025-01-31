@@ -16,6 +16,8 @@
 
 """Specifies services to interact with saves chats."""
 
+import uuid
+
 from creative_assistant import repositories
 from creative_assistant.models import chat as ch
 
@@ -62,6 +64,8 @@ class ChatService:
 
   def load_chat(self, chat_id: str) -> ch.Chat | None:
     """Loads chat by its id."""
+    if isinstance(chat_id, str):
+      chat_id = uuid.UUID(chat_id)
     return self.repo.get_by_id(chat_id)
 
   def save_chat(self, chat: ch.Chat) -> str:
@@ -76,8 +80,8 @@ class ChatService:
 
   def delete_chat(self, chat_id: str) -> None:
     """Deletes chat from repository."""
-    self.repo.delete_by_id(chat_id)
+    self.repo.delete_by_id(uuid.UUID(chat_id))
 
   def rename_chat(self, chat_id: str, name: str) -> None:
     """Renames chat."""
-    return self.repo.update(chat_id, {'name': name})
+    return self.repo.update(uuid.UUID(chat_id), {'name': name})

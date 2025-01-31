@@ -54,26 +54,25 @@ class CreativeAssistantChatPostRequest(pydantic.BaseModel):
   name: str
 
 
-@app.get('/chats')
+@app.get('/api/chats')
 def get_chats():
   return [
     chat.to_dict() for chat in bootstraped_assistant.chat_service.get_chats()
   ]
 
 
-@app.post('/chats')
+@app.post('/api/chats')
 def create_chat(request: CreativeAssistantChatPostRequest) -> None:
   chat = creative_assistant.Chat(name=request.name)
   return bootstraped_assistant.chat_service.save_chat(chat)
 
 
-@app.get('/chats/{chat_id}')
+@app.get('/api/chats/{chat_id}')
 def get_chat(chat_id: str):
-  chat_id = bootstraped_assistant.start_chat()
   return bootstraped_assistant.chat_service.load_chat(chat_id).to_full_dict()
 
 
-@app.post('/interact')
+@app.post('/api/interact')
 def interact(
   request: CreativeAssistantPostRequest,
 ) -> str:

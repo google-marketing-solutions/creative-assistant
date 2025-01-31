@@ -23,7 +23,6 @@ from __future__ import annotations
 
 import dataclasses
 import inspect
-import logging
 import os
 import uuid
 from collections.abc import Sequence
@@ -109,7 +108,6 @@ class CreativeAssistant:
     self.tools = tools
     self.verbose = verbose
     self.chat_service = chats_service
-    self._chat_id = None
 
   @property
   def tools_descriptions(self) -> dict[str, str]:
@@ -156,37 +154,6 @@ class CreativeAssistant:
       history_messages_key='chat_history',
     )
 
-  def start_chat(self, chat_id: str = str(uuid.uuid1())) -> str:
-    """Attaches all CreativeAssistant interactions to a single chat session.
-
-    Args:
-      chat_id: Optional identifier of a chat.
-
-    Returns:
-      Generated or supplied chat_id.
-
-    Raises:
-      CreativeAssistantChatError: Raised when chat already started.
-    """
-    if self._chat_id is not None:
-      raise CreativeAssistantChatError('Chat already started')
-    self._chat_id = chat_id
-    return chat_id
-
-  def resume_chat(self, chat_id: str) -> None:
-    """Instruct assistant to work only with selected chat.
-
-    Args:
-      chat_id: Identifier of a chat.
-    """
-    self._chat_id = chat_id
-
-  def end_chat(self) -> None:
-    """Stop mapping CreativeAssistant interactions to a single chat session."""
-    if self._chat_id is None:
-      logging.warning('No active chats')
-    self._chat_id = None
-
   def interact(
     self, question: str, chat_id: str | None = None
   ) -> CreativeAssistantResponse:
@@ -201,12 +168,14 @@ class CreativeAssistant:
     """
     if not chat_id:
       chat_id = self.chat_service.save_chat(ch.Chat())
+    if isinstance(chat_id, str):
+      chat_id = uuid.UUID(chat_id)
     new_message = ch.Message(chat_id=chat_id, author='user', content=question)
     self.chat_service.save_message(new_message)
 
     response = self.agent_executor.invoke(
       {'input': question},
-      config={'configurable': {'session_id': chat_id}},
+      config={'configurable': {'session_id': chat_id.hex}},
     )
     self.chat_service.save_message(
       ch.Message(
@@ -216,7 +185,7 @@ class CreativeAssistant:
     return CreativeAssistantResponse(
       input=response.get('input'),
       output=response.get('output'),
-      chat_id=chat_id,
+      chat_id=chat_id.hex,
     )
 
 
