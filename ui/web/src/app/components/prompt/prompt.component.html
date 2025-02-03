@@ -1,0 +1,12 @@
+<div class="prompt-area">
+  <form>
+    <mat-form-field class="prompt">
+      <mat-label>Enter your prompt</mat-label>
+      <textarea
+        #prompt
+        matInput
+        (keydown.enter)="onEnter(prompt.value, chatId)"
+      ></textarea>
+    </mat-form-field>
+  </form>
+</div>

@@ -1,0 +1,23 @@
+.chat-container {
+  display: grid;
+  height: 100vh;
+  grid:
+    "header  " 5em
+    "messages" 1fr
+    "prompt  " 15em /
+    1fr;
+}
+.chat-header {
+  grid-area: header;
+}
+.messages-container {
+  grid-area: messages;
+  overflow: scroll;
+  overflow-x: hidden;
+}
+prompt {
+  grid-area: prompt;
+  position: fixed;
+  bottom: 0;
+  width: 80%;
+}

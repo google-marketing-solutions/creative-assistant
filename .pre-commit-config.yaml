@@ -54,3 +54,11 @@ repos:
     language: system
     pass_filenames: false
     always_run: true
+- repo: local
+  hooks:
+
+  - id: prettier
+    name: prettier
+    entry: npx prettier --write  ui/web/src/app/
+    language: system
+    pass_filenames: false

@@ -1,0 +1,10 @@
+<div>
+  <mat-form-field>
+    <mat-label>Select chat</mat-label>
+    <mat-select [(ngModel)]="selectedChat" (ngModelChange)="onChatSelected()">
+      @for (chat_data of chats; track chat_data) {
+        <mat-option [value]="chat_data.id">Chat {{ chat_data.id }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>

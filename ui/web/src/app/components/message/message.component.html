@@ -1,0 +1,9 @@
+<div
+  [ngClass]="{
+    message: true,
+    'user-message': m.author == 'user',
+    'other-message': m.author === 'assistant'
+  }"
+>
+  <div class="message-text" [innerHTML]="formattedHtml"></div>
+</div>

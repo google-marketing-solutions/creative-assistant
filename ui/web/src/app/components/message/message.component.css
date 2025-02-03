@@ -1,0 +1,15 @@
+.message {
+  padding: 5px;
+  border-radius: 5px;
+  clear: both;
+}
+
+.user-message {
+  background-color: #e0f2f7;
+  float: right;
+}
+
+.other-message {
+  background-color: #f5f5f5;
+  float: left;
+}

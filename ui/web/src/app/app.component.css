@@ -1,0 +1,39 @@
+html {
+  height: 100vh;
+}
+body {
+  display: grid;
+  grid:
+    "header" 5em
+    "nav   " 5em
+    "main  " 20em /
+    1fr;
+}
+
+@media screen and (min-width: 600px) {
+  body {
+    grid:
+      "header header" 5em
+      "nav    main  " 20em /
+      1fr 2fr;
+  }
+}
+
+@media screen and (min-width: 800px) {
+  body {
+    grid:
+      "header header header" 5em
+      "nav    main  main " 20em /
+      1fr 2fr 1fr;
+  }
+}
+
+header {
+  grid-area: header;
+}
+nav {
+  grid-area: nav;
+}
+main {
+  grid-area: main;
+}
