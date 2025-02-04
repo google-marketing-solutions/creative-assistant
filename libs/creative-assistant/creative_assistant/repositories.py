@@ -93,13 +93,19 @@ class SqlAlchemyRepository(BaseRepository):
         session.add(result)
       session.commit()
 
-  def list(self, limit: int | None = None) -> list[entity.Entity]:
+  def list(
+    self,
+    limit: int = 0,
+    offset: int = 0,
+  ) -> list[entity.Entity]:
     """Returns all tagging results from the repository."""
     query = (
       self.session()
       .query(self.orm_model)
       .order_by(self.orm_model.created_at.desc())
     )
+    if offset:
+      query = query.offset(limit * offset)
     if limit:
       query = query.limit(limit)
     return query.all()

@@ -60,9 +60,10 @@ def get_tools():
 
 
 @app.get('/api/chats')
-def get_chats():
+def get_chats(limit: int = 5, offset: int = 0):
   return [
-    chat.to_dict() for chat in bootstraped_assistant.chat_service.get_chats()
+    chat.to_dict()
+    for chat in bootstraped_assistant.chat_service.get_chats(limit, offset)
   ]
 
 

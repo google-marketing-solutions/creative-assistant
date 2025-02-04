@@ -48,18 +48,19 @@ class ChatService:
     self.repo = chat_repository
     self.message_repository = MessageRepository(db_url=self.repo.db_url)
 
-  def get_chats(self, limit: int = 10) -> list[ch.Chat]:
+  def get_chats(self, limit: int = 10, offset: int = 0) -> list[ch.Chat]:
     """Returns available chats.
 
     Args:
       limit: Number of chats to return.
+      offset: Offset for loading extra chats.
 
     Returns:
       Chats without their messages.
     """
     return [
       ch.Chat(chat_id=c.chat_id, name=c.name, created_at=c.created_at)
-      for c in self.repo.list(limit)
+      for c in self.repo.list(limit, offset)
     ]
 
   def load_chat(self, chat_id: str) -> ch.Chat | None:
