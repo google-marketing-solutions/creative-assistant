@@ -101,9 +101,9 @@ class Chat(entity.Entity):
 
   def to_dict(self) -> dict[str, str | datetime.datetime]:
     return {
-      'chat_id': self.chat_id.hex,
+      'id': self.chat_id.hex,
       'name': self.name,
-      'created_at': self.created_at,
+      'createdAt': self.created_at,
     }
 
   def to_full_dict(self) -> dict[str, str | datetime.datetime]:
