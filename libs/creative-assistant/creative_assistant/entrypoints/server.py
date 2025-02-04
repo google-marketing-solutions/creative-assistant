@@ -54,6 +54,11 @@ class CreativeAssistantChatPostRequest(pydantic.BaseModel):
   name: str
 
 
+@app.get('/api/tools')
+def get_tools():
+  return bootstraped_assistant.tools_info
+
+
 @app.get('/api/chats')
 def get_chats():
   return [

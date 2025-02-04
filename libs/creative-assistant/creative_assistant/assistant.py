@@ -115,6 +115,16 @@ class CreativeAssistant:
     return {tool.name: tool.description for tool in self.tools}
 
   @property
+  def tools_info(self) -> dict[str, dict[str, str | list[str]]]:
+    return {
+      tool.name: {
+        'description': tool.description,
+        'prompts': tool.pre_prompts if hasattr(tool, 'pre_prompts') else [],
+      }
+      for tool in self.tools
+    }
+
+  @property
   def agent_executor(self) -> agents.AgentExecutor:
     """Defines agent executor to handle question from users."""
     tools_descriptions = '\n'.join(
