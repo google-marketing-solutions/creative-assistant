@@ -180,6 +180,8 @@ class CreativeAssistant:
       chat_id = self.chat_service.save_chat(ch.Chat())
     if isinstance(chat_id, str):
       chat_id = uuid.UUID(chat_id)
+    if not self.chat_service.load_chat(chat_id):
+      self.chat_service.save_chat(ch.Chat(chat_id=chat_id))
     new_message = ch.Message(chat_id=chat_id, author='user', content=question)
     self.chat_service.save_message(new_message)
 
