@@ -53,6 +53,9 @@ testpaths = [
   "tests",
 ]
 
+[tool.setuptools.package-data]
+"*"= ["*.js", "*.css", "*.html", "*.ico", "*.png"]
+
 [project.scripts]
 creative-assistant="creative_assistant.entrypoints.cli:main"
-creative-assistant-ui="creative_assistant.entrypoints.streamlit:main"
+creative-assistant-ui="creative_assistant.entrypoints.server:main"

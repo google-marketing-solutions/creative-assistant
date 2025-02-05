@@ -15,9 +15,14 @@
 
 # pylint: disable=C0330, g-bad-import-order, g-multiple-import
 
+import argparse
+import pathlib
+
 import dotenv
 import fastapi
 import pydantic
+import uvicorn
+from fastapi.staticfiles import StaticFiles
 
 import creative_assistant
 from creative_assistant import assistant, logger
@@ -98,3 +103,31 @@ def interact(
     {'input': result.input, 'output': result.output},
   )
   return result.output
+
+
+build_dir = pathlib.Path(pathlib.Path(__file__).parent / 'static/browser')
+app.mount(
+  '/',
+  StaticFiles(
+    directory=build_dir,
+    html=True,
+  ),
+  name='static',
+)
+
+
+def main():
+  parser = argparse.ArgumentParser()
+  parser.add_argument(
+    '--port',
+    dest='port',
+    default='8000',
+    type=int,
+    help='Port to launch CreativeAssistant Server',
+  )
+  args = parser.parse_args()
+  uvicorn.run(app, host='0.0.0.0', port=args.port)
+
+
+if __name__ == '__main__':
+  main()

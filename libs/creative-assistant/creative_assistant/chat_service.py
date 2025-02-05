@@ -44,7 +44,7 @@ class ChatService:
   def __init__(self, chat_repository: ChatRepository | None = None) -> None:
     """Initializes ChatService."""
     if not chat_repository:
-      chat_repository = ChatRepository(db_url='sqlite:///test2.db')
+      chat_repository = ChatRepository(db_url='sqlite:///chat-history.db')
     self.repo = chat_repository
     self.message_repository = MessageRepository(db_url=self.repo.db_url)
 

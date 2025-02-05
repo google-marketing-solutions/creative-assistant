@@ -69,6 +69,9 @@ creative-assistant
 Now you can interact with assistant by asking it various question.
 To end conversation enter `quit`, `bye` or `exit` as a message.
 
+> You can launch web version of Creative Assistant by running the following command:
+> `uvicorn creative_assistant.entrypoints.server:app`
+
 ## Disclaimer
 This is not an officially supported Google product. This project is not
 eligible for the [Google Open Source Software Vulnerability Rewards
