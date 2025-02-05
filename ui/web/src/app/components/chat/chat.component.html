@@ -1,9 +1,4 @@
 <div class="chat-container">
-  @if (isActiveChat) {
-    <p>Welcome to chat {{ id }}</p>
-  } @else {
-    <p>Start new chat</p>
-  }
   <div class="messages-container" #messagesArea>
     @for (me of messages; track me) {
       <message class="message-container" [m]="me"></message>

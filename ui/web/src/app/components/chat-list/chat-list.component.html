@@ -1,10 +1,19 @@
-<div>
-  <mat-form-field>
-    <mat-label>Select chat</mat-label>
-    <mat-select [(ngModel)]="selectedChat" (ngModelChange)="onChatSelected()">
-      @for (chat_data of chats; track chat_data) {
-        <mat-option [value]="chat_data.id">Chat {{ chat_data.id }}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h2>Recent chats</h2>
+  </div>
+  <ul class="chat-list">
+    @for (chat_data of chats; track chat_data) {
+      <li
+        [value]="chat_data.id"
+        (click)="selectChat(chat_data.id)"
+        (ngModelChange)="onChatSelected()"
+      >
+        <div class="chat-item">
+          <mat-icon>subject</mat-icon>
+          <span>Chat {{ chat_data.id | truncate }}</span>
+        </div>
+      </li>
+    }
+  </ul>
 </div>

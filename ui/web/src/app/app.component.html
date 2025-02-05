@@ -1,10 +1,13 @@
 <router-outlet />
 <body>
-  <header class="grid-item">Welcome to {{ title }}</header>
+  <header>
+    <h1>Welcome to {{ title }}</h1>
+  </header>
+  <button class="new-chat" (click)="startChat()">Start new chat</button>
   <nav class="grid-item">
     <chat-list #chat (chatSelected)="setChat(chat.selectedChat)"></chat-list>
   </nav>
   <main class="grid-item">
-    <chat [id]="chatId"></chat>
+    <chat [id]="chatId" [isNewChat]="newChat"></chat>
   </main>
 </body>

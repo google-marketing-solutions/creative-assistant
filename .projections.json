@@ -1,5 +1,11 @@
 {
   "libs/creative-assistant/creative_assistant/*.py": {"type": "assist", "alternate": "libs/creative-assistant/tests/unit/test_{}.py"},
   "libs/creative-assistant/tests/unit/test_*.py": {"alternate": "libs/creative-assistant/creative_assistant/{}.py"},
-  "libs/plugins/*": {"type": "plugin"}
+  "ui/web/src/app/app.component.ts": {"type": "ts-app", "alternate": "ui/web/src/app/app.component.html"},
+  "ui/web/src/app/components/chat/chat.component.ts": {"type": "ts-chat", "alternate": "ui/web/src/app/components/chat/chat.component.html"},
+  "ui/web/src/app/components/message/message.component.ts": {"type": "ts-message", "alternate": "ui/web/src/app/components/message/message.component.html"},
+  "ui/web/src/app/components/prompt/prompt.component.ts": {"type": "ts-prompt", "alternate": "ui/web/src/app/components/prompt/prompt.component.html"},
+  "ui/web/src/app/components/chat-list/chat-list.component.ts": {"type": "ts-chat-list", "alternate": "ui/web/src/app/components/chat-list/chat-list.component.html"},
+  "ui/web/src/app/services/*.ts": {"type": "ts-service"},
+  "ui/web/src/app/models/*.ts": {"type": "ts-model"}
 }

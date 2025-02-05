@@ -19,7 +19,6 @@ export class MessageComponent implements OnInit {
   ngOnInit() {
     this.isUserMessage = this.m.author === 'user';
     this.formattedHtml = this.formatMessageToHtml(this.m.content);
-    console.log(this.formattedHtml);
   }
 
   private formatMessageToHtml(content: string): string {

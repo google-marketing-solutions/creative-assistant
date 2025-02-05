@@ -5,6 +5,7 @@ body {
   display: grid;
   grid:
     "header" 5em
+    "new-chat" 2em
     "nav   " 5em
     "main  " 20em /
     1fr;
@@ -14,6 +15,7 @@ body {
   body {
     grid:
       "header header" 5em
+      "new-chat new-chat" 2em
       "nav    main  " 20em /
       1fr 2fr;
   }
@@ -23,6 +25,7 @@ body {
   body {
     grid:
       "header header header" 5em
+      "new-chat new-chat new-chat" 2em
       "nav    main  main " 20em /
       1fr 2fr 1fr;
   }
@@ -30,6 +33,19 @@ body {
 
 header {
   grid-area: header;
+  background-color: #303030;
+  text-align: center;
+  color: white;
+  padding: 5px;
+}
+
+.new-chat {
+  grid-area: new-chat;
+  width: 210px;
+}
+
+.new-chat:hover {
+  background-color: #ababab;
 }
 nav {
   grid-area: nav;
