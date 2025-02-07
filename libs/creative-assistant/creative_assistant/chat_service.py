@@ -63,7 +63,7 @@ class ChatService:
       for c in self.repo.list(limit, offset)
     ]
 
-  def load_chat(self, chat_id: str) -> ch.Chat | None:
+  def load_chat(self, chat_id: str | uuid.UUID) -> ch.Chat | None:
     """Loads chat by its id."""
     if isinstance(chat_id, str):
       chat_id = uuid.UUID(chat_id)
@@ -79,10 +79,10 @@ class ChatService:
     """Saves message to repository."""
     self.message_repository.add(message)
 
-  def delete_chat(self, chat_id: str) -> None:
+  def delete_chat(self, chat_id: str | uuid.UUID) -> None:
     """Deletes chat from repository."""
-    self.repo.delete_by_id(uuid.UUID(chat_id))
+    self.repo.delete_by_id(chat_id)
 
-  def rename_chat(self, chat_id: str, name: str) -> None:
+  def rename_chat(self, chat_id: str | uuid.UUID, name: str) -> None:
     """Renames chat."""
-    return self.repo.update(uuid.UUID(chat_id), {'name': name})
+    return self.repo.update(chat_id, {'name': name})

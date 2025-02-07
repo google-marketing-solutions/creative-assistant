@@ -118,3 +118,11 @@ class SqlAlchemyRepository(BaseRepository):
       .filter_by(**{self.primary_key: identifier})
       .delete()
     )
+
+  def update(self, identifier: str, update_mask: dict[str, str]) -> None:
+    """Update entity in the repository."""
+    with self.session() as session:
+      session.query(self.orm_model).filter_by(
+        **{self.primary_key: identifier}
+      ).update(update_mask)
+      session.commit()
