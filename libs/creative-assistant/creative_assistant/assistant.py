@@ -21,6 +21,7 @@ information related to creative trends.
 
 from __future__ import annotations
 
+import asyncio
 import dataclasses
 import inspect
 import os
@@ -176,14 +177,19 @@ class CreativeAssistant:
     Returns:
       Mappings with question and answer.
     """
+    create_chat_name = False
     if not chat_id:
       chat_id = self.chat_service.save_chat(ch.Chat())
+      create_chat_name = True
     if isinstance(chat_id, str):
       chat_id = uuid.UUID(chat_id)
     if not self.chat_service.load_chat(chat_id):
       self.chat_service.save_chat(ch.Chat(chat_id=chat_id))
+      create_chat_name = True
     new_message = ch.Message(chat_id=chat_id, author='user', content=question)
     self.chat_service.save_message(new_message)
+    if create_chat_name:
+      self._name_chat(chat_id, question)
 
     response = self.agent_executor.invoke(
       {'input': question},
@@ -199,6 +205,17 @@ class CreativeAssistant:
       output=response.get('output'),
       chat_id=chat_id.hex,
     )
+
+  def _name_chat(self, chat_id: str, initial_message: str) -> str:
+    try:
+      llm_response = self.llm.invoke(
+        'Give a short summary (maximum 30 characters) of the following '
+        f'question: {initial_message}'
+      )
+      chat_name = llm_response.content.strip()
+    except Exception:
+      chat_name = ''
+    self.chat_service.rename_chat(chat_id, chat_name)
 
 
 def bootstrap_assistant(
