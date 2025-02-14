@@ -98,11 +98,11 @@ class SqlAlchemyRepository(BaseRepository):
     limit: int = 0,
     offset: int = 0,
   ) -> list[entity.Entity]:
-    """Returns all tagging results from the repository."""
+    """Returns entities from the repository."""
     query = (
       self.session()
       .query(self.orm_model)
-      .order_by(self.orm_model.created_at.desc())
+      .order_by(self.orm_model.pinned, self.orm_model.created_at.desc())
     )
     if offset:
       query = query.offset(limit * offset)
@@ -112,12 +112,11 @@ class SqlAlchemyRepository(BaseRepository):
 
   def delete_by_id(self, identifier: str) -> None:
     """Specifies delete operations."""
-    return (
-      self.session()
-      .query(self.orm_model)
-      .filter_by(**{self.primary_key: identifier})
-      .delete()
-    )
+    with self.session() as session:
+      session.query(self.orm_model).filter_by(
+        **{self.primary_key: identifier}
+      ).delete()
+      session.commit()
 
   def update(self, identifier: str, update_mask: dict[str, str]) -> None:
     """Update entity in the repository."""
