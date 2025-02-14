@@ -1,9 +1,11 @@
 <div class="chat-container">
-  <div class="messages-container" #messagesArea>
-    @for (me of messages; track me) {
-      <message class="message-container" [m]="me"></message>
-    }
-  </div>
+  @if (!isNewChat) {
+    <div class="messages-container" #messagesArea>
+      @for (me of messages; track me) {
+        <message class="message-container" [m]="me"></message>
+      }
+    </div>
+  }
   <div>
     <prompt
       [chatId]="id"

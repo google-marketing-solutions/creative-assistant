@@ -2,18 +2,22 @@
   <div class="sidebar-header">
     <h2>Recent chats</h2>
   </div>
+  <div></div>
   <ul class="chat-list">
     @for (chat_data of chats; track chat_data) {
-      <li
-        [value]="chat_data.id"
-        (click)="selectChat(chat_data.id)"
-        (ngModelChange)="onChatSelected()"
-      >
+      <li [value]="chat_data.id" (ngModelChange)="onChatSelected()">
         <div class="chat-item">
-          <mat-icon>subject</mat-icon>
-          <span matTooltip="{{ chat_data.name }}" matTooltipPosition="right">{{
-            chat_data.name | truncate
-          }}</span>
+          <div (click)="selectChat(chat_data.id)">
+            <mat-icon>subject</mat-icon>
+          </div>
+          <div (click)="selectChat(chat_data.id)">
+            <span
+              matTooltip="{{ chat_data.name }}"
+              matTooltipPosition="right"
+              >{{ chat_data.name | truncate }}</span
+            >
+          </div>
+          <chat-options [id]="chat_data.id" [pinned]="chat_data.pinned" />
         </div>
       </li>
     }

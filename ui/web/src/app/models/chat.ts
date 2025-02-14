@@ -16,6 +16,10 @@ export interface Chat {
    */
   createdAt: string;
   /**
+   * Pinned: Whether the chat is pinned.
+   */
+  pinned: boolean;
+  /**
    * Messages: All messages in the chat.
    */
   messages: Message[];
