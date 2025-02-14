@@ -10,7 +10,7 @@ export interface Chat {
   /**
    * Chat name:  Optional chat name.
    */
-  name?: string;
+  name: string;
   /**
    * Created at: When chat was created.
    */

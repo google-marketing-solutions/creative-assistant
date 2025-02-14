@@ -16,7 +16,7 @@ import { ChatService } from './../../services/chat.service';
   name: 'truncate',
 })
 export class TruncatePipe implements PipeTransform {
-  transform(value: string, limit = 20, ellipsis = '...'): string {
+  transform(value: string, limit = 30, ellipsis = '...'): string {
     if (!value) {
       return '';
     }

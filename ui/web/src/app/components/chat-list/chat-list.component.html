@@ -11,7 +11,9 @@
       >
         <div class="chat-item">
           <mat-icon>subject</mat-icon>
-          <span>Chat {{ chat_data.id | truncate }}</span>
+          <span matTooltip="{{ chat_data.name }}" matTooltipPosition="right">{{
+            chat_data.name | truncate
+          }}</span>
         </div>
       </li>
     }

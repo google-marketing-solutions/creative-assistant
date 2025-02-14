@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Chat } from './../../models/chat';
 import { ChatService } from './../../services/chat.service';
 import { ChatComponent, TruncatePipe } from '../chat/chat.component';
@@ -20,6 +21,7 @@ import { ChatComponent, TruncatePipe } from '../chat/chat.component';
     ReactiveFormsModule,
     MatInputModule,
     TruncatePipe,
+    MatTooltipModule,
   ],
   templateUrl: './chat-list.component.html',
   styleUrl: './chat-list.component.css',
