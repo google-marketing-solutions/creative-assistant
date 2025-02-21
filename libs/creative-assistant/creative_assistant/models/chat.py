@@ -51,13 +51,14 @@ class Message(entity.Entity):
   )
   chat: Mapped[Chat] = relationship(back_populates='messages', init=False)
 
-  def __repr__(self):
+  def __repr__(self):  # noqa: D105
     return (
       f'Message(chat_id={self.chat_id}, author={self.author}, '
       f'message_id={self.message_id}, created_at={self.created_at})'
     )
 
   def to_dict(self) -> dict[str, str | datetime.datetime]:
+    """Converts message to a dictionary."""
     return {
       'author': self.author,
       'content': self.content,
@@ -91,16 +92,17 @@ class Chat(entity.Entity):
   )
   pinned: Mapped[bool] = mapped_column(sqlalchemy.Boolean, default=False)
 
-  def __repr__(self):
+  def __repr__(self):  # noqa: D105
     return (
       f'Chat(chat_id={self.chat_id}, name={self.name}, '
       f'created_at={self.created_at}), pinned={self.pinned}'
     )
 
-  def __eq__(self, other: Chat) -> bool:
+  def __eq__(self, other: Chat) -> bool:  # noqa: D105
     return (self.chat_id, self.name) == (other.chat_id, other.name)
 
   def to_dict(self) -> dict[str, str | datetime.datetime]:
+    """Convert chat to a dictionary without messages."""
     return {
       'id': self.chat_id.hex,
       'name': self.name,
@@ -109,6 +111,7 @@ class Chat(entity.Entity):
     }
 
   def to_full_dict(self) -> dict[str, str | datetime.datetime]:
+    """Convert chat to a dictionary with messages."""
     chat_info = self.to_dict()
     messages = [
       message.to_dict()

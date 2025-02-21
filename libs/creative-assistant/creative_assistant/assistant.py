@@ -116,6 +116,7 @@ class CreativeAssistant:
 
   @property
   def tools_info(self) -> dict[str, dict[str, str | list[str]]]:
+    """Mapping between tool name and it's description and built-in prompts."""
     return {
       tool.name: {
         'description': tool.description,
