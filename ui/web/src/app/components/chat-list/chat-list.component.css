@@ -1,5 +1,5 @@
 .sidebar {
-  width: 300px;
+  width: 250px;
   background-color: #f0f0f0;
   border-right: 1px solid #ccc;
   display: flex;
@@ -29,8 +29,10 @@
   flex-grow: 1;
 }
 .chat-item {
-  display: inline-flex;
-  align-items: flex-start;
+  align-items: flex;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 2px;
   margin: 2px;
 }
@@ -41,4 +43,8 @@
 
 .chat-item.active {
   background-color: #ddd;
+}
+#matMenu {
+  display: flex;
+  align-items: right;
 }

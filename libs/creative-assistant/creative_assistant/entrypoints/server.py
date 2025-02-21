@@ -59,6 +59,11 @@ class CreativeAssistantChatPostRequest(pydantic.BaseModel):
   name: str
 
 
+class ChatUpdateFieldMask(pydantic.BaseModel):
+  name: str | None = None
+  pinned: bool | None = None
+
+
 @app.get('/api/tools')
 def get_tools():
   return bootstraped_assistant.tools_info
@@ -81,6 +86,19 @@ def create_chat(request: CreativeAssistantChatPostRequest) -> None:
 @app.get('/api/chats/{chat_id}')
 def get_chat(chat_id: str):
   return bootstraped_assistant.chat_service.load_chat(chat_id).to_full_dict()
+
+
+@app.delete('/api/chats/{chat_id}')
+def delete_chat(chat_id: str):
+  bootstraped_assistant.chat_service.delete_chat(chat_id)
+
+
+@app.patch('/api/chats/{chat_id}', response_model=ChatUpdateFieldMask)
+def update_chat(chat_id: str, updates: ChatUpdateFieldMask):
+  update_data = {
+    field: data for field, data in updates.dict().items() if data is not None
+  }
+  bootstraped_assistant.chat_service.update_chat(chat_id, **update_data)
 
 
 @app.post('/api/interact')

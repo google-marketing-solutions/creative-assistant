@@ -10,11 +10,15 @@ export interface Chat {
   /**
    * Chat name:  Optional chat name.
    */
-  name?: string;
+  name: string;
   /**
    * Created at: When chat was created.
    */
   createdAt: string;
+  /**
+   * Pinned: Whether the chat is pinned.
+   */
+  pinned: boolean;
   /**
    * Messages: All messages in the chat.
    */

@@ -59,11 +59,13 @@ class ChatService:
       Chats without their messages.
     """
     return [
-      ch.Chat(chat_id=c.chat_id, name=c.name, created_at=c.created_at)
+      ch.Chat(
+        chat_id=c.chat_id, name=c.name, created_at=c.created_at, pinned=c.pinned
+      )
       for c in self.repo.list(limit, offset)
     ]
 
-  def load_chat(self, chat_id: str) -> ch.Chat | None:
+  def load_chat(self, chat_id: str | uuid.UUID) -> ch.Chat | None:
     """Loads chat by its id."""
     if isinstance(chat_id, str):
       chat_id = uuid.UUID(chat_id)
@@ -79,10 +81,18 @@ class ChatService:
     """Saves message to repository."""
     self.message_repository.add(message)
 
-  def delete_chat(self, chat_id: str) -> None:
+  def delete_chat(self, chat_id: str | uuid.UUID) -> None:
     """Deletes chat from repository."""
+    if isinstance(chat_id, str):
+      chat_id = uuid.UUID(chat_id)
     self.repo.delete_by_id(chat_id)
 
-  def rename_chat(self, chat_id: str, name: str) -> None:
+  def update_chat(self, chat_id: str | uuid.UUID, **kwargs) -> None:
+    if isinstance(chat_id, str):
+      chat_id = uuid.UUID(chat_id)
+    return self.repo.update(chat_id, kwargs)
+
+  def rename_chat(self, chat_id: str | uuid.UUID, name: str) -> None:
     """Renames chat."""
-    return self.repo.update(chat_id, {'name': name})
+    return self.update_chat(chat_id, name=name)
+

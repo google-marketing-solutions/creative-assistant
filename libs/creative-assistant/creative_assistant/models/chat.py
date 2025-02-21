@@ -89,11 +89,12 @@ class Chat(entity.Entity):
   created_at: Mapped[datetime.datetime] = mapped_column(
     sqlalchemy.DateTime, default_factory=datetime.datetime.utcnow
   )
+  pinned: Mapped[bool] = mapped_column(sqlalchemy.Boolean, default=False)
 
   def __repr__(self):
     return (
       f'Chat(chat_id={self.chat_id}, name={self.name}, '
-      f'created_at={self.created_at})'
+      f'created_at={self.created_at}), pinned={self.pinned}'
     )
 
   def __eq__(self, other: Chat) -> bool:
@@ -104,6 +105,7 @@ class Chat(entity.Entity):
       'id': self.chat_id.hex,
       'name': self.name,
       'createdAt': self.created_at,
+      'pinned': self.pinned,
     }
 
   def to_full_dict(self) -> dict[str, str | datetime.datetime]:

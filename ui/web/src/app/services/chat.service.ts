@@ -15,4 +15,16 @@ export class ChatService {
   getChats() {
     return this.httpClient.get<Chat[]>(`api/chats`);
   }
+  deleteChat(chatId: string) {
+    return this.httpClient.delete(`api/chats/${chatId}`);
+  }
+  pinChat(chatId: string) {
+    return this.httpClient.patch(`api/chats/${chatId}`, { pinned: true });
+  }
+  unpinChat(chatId: string) {
+    return this.httpClient.patch(`api/chats/${chatId}`, { pinned: false });
+  }
+  renameChat(chatId: string, name: string) {
+    return this.httpClient.patch(`api/chats/${chatId}`, { name });
+  }
 }

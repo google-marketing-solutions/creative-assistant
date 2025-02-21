@@ -1,6 +1,10 @@
 .chat-container {
   display: grid;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-box-pack: center;
   height: 100vh;
+  max-width: 760px;
   grid:
     "header  " 5em
     "messages" 1fr
