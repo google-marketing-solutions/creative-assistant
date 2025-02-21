@@ -96,3 +96,4 @@ class ChatService:
   def rename_chat(self, chat_id: str | uuid.UUID, name: str) -> None:
     """Renames chat."""
     return self.update_chat(chat_id, name=name)
+
