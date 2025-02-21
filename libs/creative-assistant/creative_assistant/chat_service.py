@@ -88,6 +88,7 @@ class ChatService:
     self.repo.delete_by_id(chat_id)
 
   def update_chat(self, chat_id: str | uuid.UUID, **kwargs) -> None:
+    """Applies modifications to the chat."""
     if isinstance(chat_id, str):
       chat_id = uuid.UUID(chat_id)
     return self.repo.update(chat_id, kwargs)

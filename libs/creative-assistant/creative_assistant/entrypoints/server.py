@@ -60,17 +60,19 @@ class CreativeAssistantChatPostRequest(pydantic.BaseModel):
 
 
 class ChatUpdateFieldMask(pydantic.BaseModel):
+  """Specifies supported fields for chat update."""
+
   name: str | None = None
   pinned: bool | None = None
 
 
 @app.get('/api/tools')
-def get_tools():
+def get_tools():  # noqa: D103
   return bootstraped_assistant.tools_info
 
 
 @app.get('/api/chats')
-def get_chats(limit: int = 5, offset: int = 0):
+def get_chats(limit: int = 5, offset: int = 0):  # noqa: D103
   return [
     chat.to_dict()
     for chat in bootstraped_assistant.chat_service.get_chats(limit, offset)
@@ -78,23 +80,23 @@ def get_chats(limit: int = 5, offset: int = 0):
 
 
 @app.post('/api/chats')
-def create_chat(request: CreativeAssistantChatPostRequest) -> None:
+def create_chat(request: CreativeAssistantChatPostRequest) -> None:  # noqa: D103
   chat = creative_assistant.Chat(name=request.name)
   return bootstraped_assistant.chat_service.save_chat(chat)
 
 
 @app.get('/api/chats/{chat_id}')
-def get_chat(chat_id: str):
+def get_chat(chat_id: str):  # noqa: D103
   return bootstraped_assistant.chat_service.load_chat(chat_id).to_full_dict()
 
 
 @app.delete('/api/chats/{chat_id}')
-def delete_chat(chat_id: str):
+def delete_chat(chat_id: str):  # noqa: D103
   bootstraped_assistant.chat_service.delete_chat(chat_id)
 
 
 @app.patch('/api/chats/{chat_id}', response_model=ChatUpdateFieldMask)
-def update_chat(chat_id: str, updates: ChatUpdateFieldMask):
+def update_chat(chat_id: str, updates: ChatUpdateFieldMask):  # noqa: D103
   update_data = {
     field: data for field, data in updates.dict().items() if data is not None
   }
@@ -104,7 +106,7 @@ def update_chat(chat_id: str, updates: ChatUpdateFieldMask):
 @app.post('/api/interact')
 def interact(
   request: CreativeAssistantPostRequest,
-) -> str:
+) -> str:  # noqa: D103
   """Interacts with CreativeAssistant.
 
   Args:
@@ -134,7 +136,7 @@ app.mount(
 )
 
 
-def main():
+def main():  # noqa: D103
   parser = argparse.ArgumentParser()
   parser.add_argument(
     '--port',
