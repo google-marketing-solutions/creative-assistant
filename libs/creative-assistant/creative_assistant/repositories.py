@@ -118,6 +118,7 @@ class SqlAlchemyRepository(BaseRepository):
       ).delete()
       session.commit()
 
+
   def update(self, identifier: str, update_mask: dict[str, str]) -> None:
     """Update entity in the repository."""
     with self.session() as session:
