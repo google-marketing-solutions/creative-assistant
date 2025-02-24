@@ -21,7 +21,6 @@ information related to creative trends.
 
 from __future__ import annotations
 
-import asyncio
 import dataclasses
 import inspect
 import os
