@@ -41,10 +41,10 @@ def main():  # noqa D103
     help='Whether to provide debug info when running assistant',
   )
   parser.add_argument(
-    '--no-tools',
-    dest='no_tools',
-    action='store_true',
-    help='Whether to start assistant without tools',
+    '--tools',
+    dest='tools',
+    default='All',
+    help='Tools to load',
   )
 
   args = parser.parse_args()
@@ -52,7 +52,8 @@ def main():  # noqa D103
   assistant_logger = logger.init_logging('cli')
 
   creative_assistant = assistant.bootstrap_assistant(
-    verbose=args.verbose, no_tools=args.no_tools
+    verbose=args.verbose,
+    tools=args.tools,
   )
   rich_console = console.Console()
   if args.question:
