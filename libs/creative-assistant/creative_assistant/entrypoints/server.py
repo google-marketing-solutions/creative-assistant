@@ -39,7 +39,7 @@ class CreativeAssistantSettings(BaseSettings):
     no_tools: Whether assistant can run without tools.
   """
 
-  no_tools: bool = True
+  tools: str = 'All'
 
 
 app = fastapi.FastAPI()
@@ -51,7 +51,7 @@ class Dependencies:
   def __init__(self) -> None:
     """Initializes common dependencies."""
     settings = CreativeAssistantSettings()
-    self.assistant = assistant.bootstrap_assistant(no_tools=settings.no_tools)
+    self.assistant = assistant.bootstrap_assistant(tools=settings.tools)
     self.logger = logger.init_logging('server')
 
 

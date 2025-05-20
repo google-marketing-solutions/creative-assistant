@@ -220,14 +220,14 @@ class CreativeAssistant:
 def bootstrap_assistant(
   parameters: dict[str, str | int | float] | None = None,
   verbose: bool = False,
-  no_tools: bool = False,
+  tools: str = 'All',
 ) -> CreativeAssistant:
   """Builds CreativeAssistant with injected tools.
 
   Args:
     parameters:  Parameters for assistant and its tools instantiation.
     verbose: Whether to display additional logging information.
-    no_tools: Whether assistant can start without any tools.
+    tools: Which tools to setup during the bootstrap.
 
   Returns:
     Assistant with injected tools.
@@ -247,14 +247,19 @@ def bootstrap_assistant(
   }
   tool_parameters = {**base_llm_parameters, **parameters, 'verbose': verbose}
 
-  if no_tools:
-    tools = []
-  elif not (tools := _bootstrap_tools(tool_parameters)):
-    raise CreativeAssistantError('No Creative Assistant tools found.')
+  if tools.lower() == 'none':
+    found_tools = []
+  elif tools.lower() == 'all':
+    found_tools = _bootstrap_tools(tool_parameters)
+  else:
+    tools = [tool.replace('-', '_') for tool in tools.split(',')]
+    found_tools = _bootstrap_tools(tool_parameters, tools)
+    if not found_tools:
+      raise CreativeAssistantError('No Creative Assistant tools found.')
 
   return CreativeAssistant(
     llm=llms.create_llm(**base_llm_parameters),
-    tools=tools,
+    tools=found_tools,
     verbose=verbose,
   )
 
@@ -265,11 +270,13 @@ def _get_session_history(session_id):
 
 def _bootstrap_tools(
   parameters: dict[str, str | dict[str, str | float]],
+  supported_tools: Sequence[str] | None = None,
 ) -> list[langchain_core.tools.BaseTool]:
   """Instantiates tools modules.
 
   Args:
     parameters:  Common parameters for tool instantiation.
+    supported_tools: Tools to be bootstrapped.
 
   Returns:
     Assistant with injected tools.
@@ -283,6 +290,11 @@ def _bootstrap_tools(
         if inspect.isclass(obj) and issubclass(
           obj, langchain_core.tools.BaseTool
         ):
+          if (
+            supported_tools
+            and obj.model_fields.get('name').default not in supported_tools
+          ):
+            continue
           injected_tools.append(getattr(tool_module, name)(**parameters))
     except ModuleNotFoundError:
       continue
