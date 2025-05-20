@@ -45,8 +45,8 @@ export class ChatListComponent implements OnInit {
   selectedChat: string;
   @Output() readonly chatSelected = new EventEmitter<string>();
   private readonly router = inject(Router);
+  private chatService = inject(ChatService);
 
-  constructor(private chatService: ChatService) {}
   ngOnInit() {
     this.getChats();
   }

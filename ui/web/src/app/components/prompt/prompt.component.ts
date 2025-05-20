@@ -6,6 +6,7 @@ import {
   AfterViewInit,
   Input,
   Output,
+  inject,
 } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -35,12 +36,11 @@ export class PromptComponent implements AfterViewInit {
   @Input() chatId!: string;
   @Output() readonly messageSent = new EventEmitter<Message>();
   @Output() readonly responseReceived = new EventEmitter<Message>();
+  private assistantService = inject(AssistantService);
 
   ngAfterViewInit() {
     this.textarea = this.prompt.nativeElement;
   }
-
-  constructor(private assistantService: AssistantService) {}
 
   onEnter(value: string, chatId: string) {
     this.assistantService.interact(value, chatId).subscribe((response) => {
