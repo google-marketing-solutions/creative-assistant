@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Chat } from '../models/chat';
 
@@ -6,7 +6,7 @@ import { Chat } from '../models/chat';
   providedIn: 'root',
 })
 export class ChatService {
-  constructor(private httpClient: HttpClient) {}
+  private httpClient = inject(HttpClient);
 
   getChat(chatId: string) {
     return this.httpClient.get<Chat>(`api/chats/${chatId}`);

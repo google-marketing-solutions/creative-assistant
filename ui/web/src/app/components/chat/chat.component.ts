@@ -53,8 +53,8 @@ export class ChatComponent implements AfterViewChecked {
   @ViewChild('messagesArea') private messageArea: ElementRef;
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private chatService = inject(ChatService);
 
-  constructor(private chatService: ChatService) {}
   ngOnInit() {
     this.router.navigate(['/chats', { id: this.id }]);
   }
