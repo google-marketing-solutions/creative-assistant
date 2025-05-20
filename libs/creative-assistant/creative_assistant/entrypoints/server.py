@@ -18,22 +18,41 @@
 import argparse
 import pathlib
 
-import dotenv
 import fastapi
 import pydantic
 import uvicorn
 from fastapi.staticfiles import StaticFiles
+from pydantic_settings import BaseSettings
+from typing_extensions import Annotated
 
 import creative_assistant
 from creative_assistant import assistant, logger
 
-dotenv.load_dotenv()
+
+class CreativeAssistantSettings(BaseSettings):
+  """Specifies environmental variables for creative assistant.
+
+  Ensure that mandatory variables are exposed via
+  export ENV_VARIABLE_NAME=VALUE.
+
+  Attributes:
+    no_tools: Whether assistant can run without tools.
+  """
+
+  no_tools: bool = True
+
 
 app = fastapi.FastAPI()
 
-bootstraped_assistant = assistant.bootstrap_assistant()
 
-assistant_logger = logger.init_logging('server')
+class Dependencies:
+  """Common dependencies for the app."""
+
+  def __init__(self) -> None:
+    """Initializes common dependencies."""
+    settings = CreativeAssistantSettings()
+    self.assistant = assistant.bootstrap_assistant(no_tools=settings.no_tools)
+    self.logger = logger.init_logging('server')
 
 
 class CreativeAssistantPostRequest(pydantic.BaseModel):
@@ -67,56 +86,77 @@ class ChatUpdateFieldMask(pydantic.BaseModel):
 
 
 @app.get('/api/tools')
-def get_tools():  # noqa: D103
-  return bootstraped_assistant.tools_info
+def get_tools(  # noqa: D103
+  dependencies: Annotated[Dependencies, fastapi.Depends(Dependencies)],
+):
+  return dependencies.assistant.tools_info
 
 
 @app.get('/api/chats')
-def get_chats(limit: int = 5, offset: int = 0):  # noqa: D103
+def get_chats(  # noqa: D103
+  dependencies: Annotated[Dependencies, fastapi.Depends(Dependencies)],
+  limit: int = 5,
+  offset: int = 0,
+):
   return [
     chat.to_dict()
-    for chat in bootstraped_assistant.chat_service.get_chats(limit, offset)
+    for chat in dependencies.assistant.chat_service.get_chats(limit, offset)
   ]
 
 
 @app.post('/api/chats')
-def create_chat(request: CreativeAssistantChatPostRequest) -> None:  # noqa: D103
+def create_chat(  # noqa: D103
+  request: CreativeAssistantChatPostRequest,
+  dependencies: Annotated[Dependencies, fastapi.Depends(Dependencies)],
+) -> None:
   chat = creative_assistant.Chat(name=request.name)
-  return bootstraped_assistant.chat_service.save_chat(chat)
+  return dependencies.assistant.chat_service.save_chat(chat)
 
 
 @app.get('/api/chats/{chat_id}')
-def get_chat(chat_id: str):  # noqa: D103
-  return bootstraped_assistant.chat_service.load_chat(chat_id).to_full_dict()
+def get_chat(  # noqa: D103
+  chat_id: str,
+  dependencies: Annotated[Dependencies, fastapi.Depends(Dependencies)],
+):
+  return dependencies.assistant.chat_service.load_chat(chat_id).to_full_dict()
 
 
 @app.delete('/api/chats/{chat_id}')
-def delete_chat(chat_id: str):  # noqa: D103
-  bootstraped_assistant.chat_service.delete_chat(chat_id)
+def delete_chat(  # noqa: D103
+  chat_id: str,
+  dependencies: Annotated[Dependencies, fastapi.Depends(Dependencies)],
+):
+  dependencies.assistant.chat_service.delete_chat(chat_id)
 
 
 @app.patch('/api/chats/{chat_id}', response_model=ChatUpdateFieldMask)
-def update_chat(chat_id: str, updates: ChatUpdateFieldMask):  # noqa: D103
+def update_chat(  # noqa: D103
+  chat_id: str,
+  updates: ChatUpdateFieldMask,
+  dependencies: Annotated[Dependencies, fastapi.Depends(Dependencies)],
+):
   update_data = {
     field: data for field, data in updates.dict().items() if data is not None
   }
-  bootstraped_assistant.chat_service.update_chat(chat_id, **update_data)
+  dependencies.assistant.chat_service.update_chat(chat_id, **update_data)
 
 
 @app.post('/api/interact')
-def interact(
+def interact(  # noqa: D103
   request: CreativeAssistantPostRequest,
-) -> str:  # noqa: D103
+  dependencies: Annotated[Dependencies, fastapi.Depends(Dependencies)],
+) -> str:
   """Interacts with CreativeAssistant.
 
   Args:
     request: Mapping with question to assistant.
+    dependencies: Common dependencies for the app.
 
   Returns:
     Question and answer to it.
   """
-  result = bootstraped_assistant.interact(request.question, request.chat_id)
-  assistant_logger.info(
+  result = dependencies.assistant.interact(request.question, request.chat_id)
+  dependencies.logger.info(
     '[Session: %s, Prompt: %s]: Message: %s',
     result.chat_id,
     result.prompt_id,
