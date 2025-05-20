@@ -21,7 +21,6 @@ information related to creative trends.
 
 from __future__ import annotations
 
-import dataclasses
 import inspect
 import os
 import uuid
@@ -29,6 +28,7 @@ from collections.abc import Sequence
 from importlib.metadata import entry_points
 
 import langchain_core
+import pydantic
 from langchain import agents
 from langchain_community.chat_message_histories import SQLChatMessageHistory
 from langchain_core import language_models, prompts
@@ -45,8 +45,7 @@ Here are the tools you have: {tools_descriptions}
 """
 
 
-@dataclasses.dataclass
-class CreativeAssistantResponse:
+class CreativeAssistantResponse(pydantic.BaseModel):
   """Defines LLM response and its meta information.
 
   Attributes:
@@ -59,7 +58,7 @@ class CreativeAssistantResponse:
   input: str
   output: str
   chat_id: str
-  prompt_id: str = dataclasses.field(default_factory=lambda: str(uuid.uuid1()))
+  prompt_id: str = pydantic.Field(default_factory=lambda: str(uuid.uuid1()))
 
   def to_chat_messages(self) -> tuple[dict[str, str], dict[str, str]]:
     """Converts response to user / chat bot interaction."""
@@ -221,12 +220,14 @@ class CreativeAssistant:
 def bootstrap_assistant(
   parameters: dict[str, str | int | float] | None = None,
   verbose: bool = False,
+  no_tools: bool = False,
 ) -> CreativeAssistant:
   """Builds CreativeAssistant with injected tools.
 
   Args:
     parameters:  Parameters for assistant and its tools instantiation.
     verbose: Whether to display additional logging information.
+    no_tools: Whether assistant can start without any tools.
 
   Returns:
     Assistant with injected tools.
@@ -246,7 +247,9 @@ def bootstrap_assistant(
   }
   tool_parameters = {**base_llm_parameters, **parameters, 'verbose': verbose}
 
-  if not (tools := _bootstrap_tools(tool_parameters)):
+  if no_tools:
+    tools = []
+  elif not (tools := _bootstrap_tools(tool_parameters)):
     raise CreativeAssistantError('No Creative Assistant tools found.')
 
   return CreativeAssistant(

@@ -40,15 +40,23 @@ def main():  # noqa D103
     action='store_true',
     help='Whether to provide debug info when running assistant',
   )
+  parser.add_argument(
+    '--no-tools',
+    dest='no_tools',
+    action='store_true',
+    help='Whether to start assistant without tools',
+  )
+
   args = parser.parse_args()
   dotenv.load_dotenv()
   assistant_logger = logger.init_logging('cli')
 
-  creative_assistant = assistant.bootstrap_assistant(verbose=args.verbose)
-  creative_assistant.start_chat(args.chat_id)
+  creative_assistant = assistant.bootstrap_assistant(
+    verbose=args.verbose, no_tools=args.no_tools
+  )
   rich_console = console.Console()
   if args.question:
-    result = creative_assistant.interact(args.question)
+    result = creative_assistant.interact(args.question, args.chat_id)
     assistant_logger.info(
       '[Session: %s, Prompt: %s]: Message: %s',
       result.chat_id,
