@@ -34,11 +34,12 @@ repos:
     entry: bash -c 'mypy "$@" || true'
     args: [--ignore-missing-imports]
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.4.6
+  rev: v0.11.10
   hooks:
     - id: ruff
       args: [ --fix, --select, I]
     - id: ruff-format
+    - id: ruff-check
 - repo: local
   hooks:
   - id: pytest-check
