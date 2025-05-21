@@ -25,9 +25,10 @@ from creative_assistant.models import chat as ch
 class ChatRepository(repositories.SqlAlchemyRepository):
   """Repository for storing chats."""
 
-  def __init__(self, db_url) -> None:
+  def __init__(self, db_url: str | None = None) -> None:
     """Initializes ChatRepository."""
     super().__init__(db_url, orm_model=ch.Chat, primary_key='chat_id')
+    super().initialize()
 
 
 class MessageRepository(repositories.SqlAlchemyRepository):
@@ -36,6 +37,7 @@ class MessageRepository(repositories.SqlAlchemyRepository):
   def __init__(self, db_url) -> None:
     """Initializes MessageRepository."""
     super().__init__(db_url, orm_model=ch.Message, primary_key='message_id')
+    super().initialize()
 
 
 class ChatService:

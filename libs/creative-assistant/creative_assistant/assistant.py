@@ -45,6 +45,18 @@ Here are the tools you have: {tools_descriptions}
 """
 
 
+class CreativeAssistantRequest(pydantic.BaseModel):
+  """Specifies structure of request for interacting with assistant.
+
+  Attributes:
+    question: Question to the assistant.
+    chat_id: Optional chat_id to resume conversation.
+  """
+
+  question: str
+  chat_id: str | None = None
+
+
 class CreativeAssistantResponse(pydantic.BaseModel):
   """Defines LLM response and its meta information.
 
@@ -221,6 +233,7 @@ def bootstrap_assistant(
   parameters: dict[str, str | int | float] | None = None,
   verbose: bool = False,
   tools: str = 'All',
+  db_uri: str | None = None,
 ) -> CreativeAssistant:
   """Builds CreativeAssistant with injected tools.
 
@@ -228,6 +241,7 @@ def bootstrap_assistant(
     parameters:  Parameters for assistant and its tools instantiation.
     verbose: Whether to display additional logging information.
     tools: Which tools to setup during the bootstrap.
+    db_uri: Connection string for storing chats.
 
   Returns:
     Assistant with injected tools.
@@ -261,6 +275,9 @@ def bootstrap_assistant(
     llm=llms.create_llm(**base_llm_parameters),
     tools=found_tools,
     verbose=verbose,
+    chats_service=chat_service.ChatService(
+      chat_repository=chat_service.ChatRepository(db_uri)
+    ),
   )
 
 

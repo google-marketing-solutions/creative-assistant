@@ -36,10 +36,12 @@ class CreativeAssistantSettings(BaseSettings):
   export ENV_VARIABLE_NAME=VALUE.
 
   Attributes:
-    no_tools: Whether assistant can run without tools.
+    assistant_db_uri: Database connection string to store and retrieve chats.
+    assistant_tools: Tools to load.
   """
 
-  tools: str = 'All'
+  assistant_db_uri: str | None = None
+  assistant_tools: str = 'All'
 
 
 app = fastapi.FastAPI()
@@ -51,31 +53,10 @@ class Dependencies:
   def __init__(self) -> None:
     """Initializes common dependencies."""
     settings = CreativeAssistantSettings()
-    self.assistant = assistant.bootstrap_assistant(tools=settings.tools)
+    self.assistant = assistant.bootstrap_assistant(
+      tools=settings.assistant_tools, db_uri=settings.assistant_db_uri
+    )
     self.logger = logger.init_logging('server')
-
-
-class CreativeAssistantPostRequest(pydantic.BaseModel):
-  """Specifies structure of request for interacting with assistant.
-
-  Attributes:
-    question: Question to the assistant.
-    chat_id: Optional chat_id to resume conversation.
-  """
-
-  question: str
-  chat_id: str | None = None
-
-
-class CreativeAssistantChatPostRequest(pydantic.BaseModel):
-  """Specifies structure of request for interacting with assistant.
-
-  Attributes:
-    chat_name: Name of a chat.
-    chat_id: Optional chat_id.
-  """
-
-  name: str
 
 
 class ChatUpdateFieldMask(pydantic.BaseModel):
@@ -106,10 +87,10 @@ def get_chats(  # noqa: D103
 
 @app.post('/api/chats')
 def create_chat(  # noqa: D103
-  request: CreativeAssistantChatPostRequest,
+  name: str,
   dependencies: Annotated[Dependencies, fastapi.Depends(Dependencies)],
 ) -> None:
-  chat = creative_assistant.Chat(name=request.name)
+  chat = creative_assistant.Chat(name=name)
   return dependencies.assistant.chat_service.save_chat(chat)
 
 
@@ -143,9 +124,9 @@ def update_chat(  # noqa: D103
 
 @app.post('/api/interact')
 def interact(  # noqa: D103
-  request: CreativeAssistantPostRequest,
+  request: assistant.CreativeAssistantRequest,
   dependencies: Annotated[Dependencies, fastapi.Depends(Dependencies)],
-) -> str:
+) -> assistant.CreativeAssistantResponse:
   """Interacts with CreativeAssistant.
 
   Args:
@@ -162,7 +143,7 @@ def interact(  # noqa: D103
     result.prompt_id,
     {'input': result.input, 'output': result.output},
   )
-  return result.output
+  return result
 
 
 build_dir = pathlib.Path(pathlib.Path(__file__).parent / 'static/browser')

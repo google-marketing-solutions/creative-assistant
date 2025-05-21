@@ -17,7 +17,6 @@
 
 import argparse
 import sys
-import uuid
 
 import dotenv
 from rich import console, prompt, text
@@ -31,8 +30,12 @@ def main():  # noqa D103
   parser.add_argument(
     '--chat-id',
     dest='chat_id',
-    default=str(uuid.uuid1()),
     help='Optional chat_id to resume conversation',
+  )
+  parser.add_argument(
+    '--db-uri',
+    dest='db_uri',
+    help='Database connection string to store and retrieve chats',
   )
   parser.add_argument(
     '--verbose',
@@ -54,6 +57,7 @@ def main():  # noqa D103
   creative_assistant = assistant.bootstrap_assistant(
     verbose=args.verbose,
     tools=args.tools,
+    db_uri=args.db_uri,
   )
   rich_console = console.Console()
   if args.question:
@@ -68,7 +72,7 @@ def main():  # noqa D103
   else:
     question = prompt.Prompt.ask('Enter your question')
     while question:
-      result = creative_assistant.interact(question)
+      result = creative_assistant.interact(question, args.chat_id)
       assistant_logger.info(
         '[Session: %s, Prompt: %s]: Message: %s',
         result.chat_id,
