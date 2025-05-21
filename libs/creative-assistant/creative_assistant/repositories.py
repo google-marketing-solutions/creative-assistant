@@ -20,6 +20,7 @@ import abc
 from collections.abc import Sequence
 
 import sqlalchemy
+from sqlalchemy.pool import StaticPool
 
 from creative_assistant.models import entity
 
@@ -46,14 +47,17 @@ class BaseRepository(abc.ABC):
 class SqlAlchemyRepository(BaseRepository):
   """Uses SqlAlchemy engine for persisting entities."""
 
+  IN_MEMORY_DB = 'sqlite://'
+
   def __init__(
-    self, db_url: str, orm_model: entity.Entity, primary_key: str
+    self, db_url: str | None, orm_model: entity.Entity, primary_key: str
   ) -> None:
     """Initializes SqlAlchemyRepository."""
-    self.db_url = db_url
+    self.db_url = db_url or self.IN_MEMORY_DB
     self.orm_model = orm_model
     self.primary_key = primary_key
     self.initialized = False
+    self._engine = None
 
   def initialize(self) -> None:
     """Creates all ORM objects."""
@@ -70,7 +74,17 @@ class SqlAlchemyRepository(BaseRepository):
   @property
   def engine(self) -> sqlalchemy.engine.Engine:
     """Initialized SQLalchemy engine."""
-    return sqlalchemy.create_engine(self.db_url)
+    if self._engine:
+      return self._engine
+    if self.db_url == self.IN_MEMORY_DB:
+      self._engine = sqlalchemy.create_engine(
+        self.db_url,
+        connect_args={'check_same_thread': False},
+        poolclass=StaticPool,
+      )
+    else:
+      self._engine = sqlalchemy.create_engine(self.db_url)
+    return self._engine
 
   def get_by_id(self, identifier: str) -> entity.Entity | None:
     """Specifies get operations."""
