@@ -36,6 +36,7 @@ export class PromptComponent implements AfterViewInit {
   @Input() chatId!: string;
   @Output() readonly messageSent = new EventEmitter<Message>();
   @Output() readonly responseReceived = new EventEmitter<Message>();
+  @Output() readonly newChatIdReceived = new EventEmitter<string>();
   private assistantService = inject(AssistantService);
 
   ngAfterViewInit() {
@@ -43,11 +44,15 @@ export class PromptComponent implements AfterViewInit {
   }
 
   onEnter(value: string, chatId: string) {
-    this.assistantService.interact(value, chatId).subscribe((response) => {
+    this.assistantService.interact(value, chatId).subscribe((response: any) => {
       this.responseReceived.emit({
         author: 'assistant',
-        content: response.toString(),
+        content: response.output.toString(),
       });
+      if (chatId === undefined) {
+        this.chatId = response.chat_id;
+        this.newChatIdReceived.emit(this.chatId);
+      }
     });
     this.messageSent.emit({ author: 'user', content: value });
     this.prompt.nativeElement.value = '';

@@ -79,9 +79,11 @@ export class ChatComponent implements AfterViewChecked {
   addMessage(message: Message) {
     this.messages.push(message);
   }
+
   setChat(chatId: string) {
     this.id = chatId;
     this.getMessages();
+    this.router.navigate(['/chats', chatId]);
   }
 
   scrollToBottom() {
