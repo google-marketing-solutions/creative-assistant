@@ -23,7 +23,7 @@ from langchain_core import language_models
 from langchain_google_vertexai import ChatVertexAI
 
 DEFAULT_LLM_TYPE: Final[str] = 'gemini'
-DEFAULT_LLM_MODEL: Final[str] = 'gemini-1.5-flash'
+DEFAULT_LLM_MODEL: Final[str] = 'gemini-2.0-flash'
 
 
 def create_llm(
