@@ -1,0 +1,5 @@
+Assign categories to the following texts: {question}.
+Use examples below:
+{examples}
+{format_instructions}.
+Ensure that JSON properties are enclosed in always enclosed in double quotes.

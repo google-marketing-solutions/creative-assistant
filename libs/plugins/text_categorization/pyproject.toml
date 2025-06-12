@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "text-categorization"
+version = "0.1.3"
+dependencies = [
+  "smart_open",
+  "pydantic==2.9.2",
+  "langchain",
+  "langchain_core",
+  "langchain_community",
+  "langchain_google_vertexai",
+  "langchain_chroma",
+  "chromadb",
+  "garf_core",
+  "garf-executors[bq]",
+]
+authors = [
+  {name = "Google Inc. (gTech gPS CSE team)", email = "no-reply@google.com"},
+]
+license = {text = "Apache 2.0"}
+requires-python = ">=3.10"
+description = "Library for performing text categorization via LLMs"
+readme = "README.md"
+classifiers = [
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "Intended Audience :: Developers",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Operating System :: OS Independent",
+  "License :: OSI Approved :: Apache Software License",
+]
+
+[options.extras_require]
+test =  [
+  "pytest",
+  "pytest-cov"
+]
+server = [
+  "fastapi[standard]"
+]
+all = [
+  "text-categorization[server]"
+]
+
+[project.optional-dependencies]
+
+[tool.setuptools.package-data]
+"*"= ["*.txt"]
+
+[tool.pytest.ini_options]
+testpaths = [
+  "tests",
+]
+
+[project.entry-points.creative_assistant]
+text-categorizer = "text_categorization.tools"
+
+[project.scripts]
+text-categorizer="text_categorization.entrypoints.cli:main"
